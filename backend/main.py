@@ -388,6 +388,43 @@ def health_check():
     return {"status": "healthy"}
 
 
+@app.get("/debug/db")
+async def debug_db():
+    """Temporary diagnostic endpoint to debug database connectivity."""
+    import os as _os
+    from core.database import db_manager
+    from services.database import _db_initialized
+    from sqlalchemy import text
+
+    db_url = _os.environ.get("DATABASE_URL", "<NOT SET>")
+    masked = db_url[:20] + "..." if len(db_url) > 20 else db_url
+
+    result = {
+        "database_url_set": db_url != "<NOT SET>",
+        "database_url_preview": masked,
+        "engine_created": db_manager.engine is not None,
+        "session_maker_created": db_manager.async_session_maker is not None,
+        "db_initialized_flag": _db_initialized,
+    }
+
+    if db_manager.async_session_maker:
+        try:
+            async with db_manager.async_session_maker() as session:
+                await session.execute(text("SELECT 1"))
+                result["connection_test"] = "OK"
+
+                tables = await session.execute(text(
+                    "SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename"
+                ))
+                result["tables"] = [r[0] for r in tables.fetchall()]
+        except Exception as e:
+            result["connection_test"] = f"FAILED: {type(e).__name__}: {str(e)}"
+    else:
+        result["connection_test"] = "NO SESSION MAKER"
+
+    return result
+
+
 @app.get("/api/v1/health/ping")
 def health_ping():
     """Lightweight keep-alive endpoint. No DB access, no auth.
