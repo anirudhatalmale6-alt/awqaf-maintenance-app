@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<title>زيارات ميدانية لاستلام مواقع — طلب #{{ id }}</title>
+<style>
+  /* ===== Fonts ===== */
+  @font-face {
+    font-family: "Amiri";
+    src: url("file://{{ fonts_dir }}/Amiri-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Amiri";
+    src: url("file://{{ fonts_dir }}/Amiri-Bold.ttf") format("truetype");
+    font-weight: bold;
+    font-style: normal;
+  }
+
+  /* ===== Page — A4 portrait ===== */
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm 8mm 10mm;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    direction: rtl;
+    font-family: "Amiri", serif;
+    color: #000;
+    font-size: 11pt;
+    background: #fff;
+    line-height: 1.35;
+  }
+
+  /* Main page wrapper — flex column so signatures get pushed to the bottom.
+     Use a controlled height (NOT min-height) so the wrapper exactly fills
+     one A4 page minus margins, and the table-wrap absorbs leftover space. */
+  .page {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 281mm; /* A4 (297mm) - top/bottom margins (8mm each) */
+    overflow: hidden;
+  }
+
+  /* ===== Header (3 logos + captions) ===== */
+  table.form-header {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin-bottom: 2mm;
+  }
+  table.form-header td.logo-box {
+    width: 33.33%;
+    vertical-align: top;
+    text-align: center;
+    padding: 0 3mm;
+  }
+  .logo-img {
+    width: 17mm;
+    height: 17mm;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+  }
+  .right-logo-caption,
+  .center-logo-caption,
+  .left-logo-caption {
+    margin-top: 1mm;
+    line-height: 1.2;
+    text-align: center;
+  }
+  .right-logo-line {
+    font-weight: bold;
+    color: #000;
+  }
+  .right-logo-line-ar { font-size: 8.5pt; }
+  .right-logo-line-en { font-size: 7pt; margin-top: 0.3mm; font-weight: bold; }
+  .right-logo-line-mixed { font-size: 7pt; margin-top: 0.3mm; font-weight: bold; }
+  .center-logo-caption { font-size: 7pt; font-weight: 600; }
+  .left-logo-caption  { font-size: 8.5pt; font-weight: bold; }
+
+  hr.header-divider {
+    border: none;
+    border-top: 1.5pt solid #000;
+    margin: 1mm 0 1.5mm 0;
+  }
+
+  /* ===== Title ===== */
+  h1.form-title {
+    text-align: center;
+    font-size: 16pt;
+    font-weight: bold;
+    margin: 0 0 2mm 0;
+    padding: 0.5mm 0;
+    border-bottom: 1.5pt solid #000;
+  }
+
+  /* =====================================================================
+     INFO ROWS — table layout (more stable than flex in WeasyPrint).
+     Each row is a <table> with separate <td> cells for label vs value,
+     so labels never visually merge with values. Dotted line lives on the
+     value cell only (border-bottom), starting right after the label.
+     ===================================================================== */
+  .info-block {
+    margin-bottom: 1.5mm;
+  }
+  table.info-table {
+    width: 100%;
+    border-collapse: collapse;
+    direction: rtl;
+    margin-bottom: 2mm;
+    table-layout: auto;
+  }
+  table.info-table td {
+    padding: 0.8mm 2mm 1.2mm 2mm;
+    vertical-align: bottom;
+    font-size: 12pt;
+    line-height: 1.3;
+    border: none;
+  }
+  table.info-table td.info-label {
+    font-weight: bold;
+    white-space: nowrap;
+    width: 1%; /* shrink to content */
+    border: none;
+    padding-left: 1mm;
+    padding-right: 0;
+  }
+  table.info-table td.info-value {
+    font-weight: normal;
+    text-align: right;
+    border-bottom: 1.2pt dotted #000;
+    padding-right: 3mm;
+  }
+  table.info-table td.info-value-small {
+    font-weight: normal;
+    text-align: center;
+    border-bottom: 1.2pt dotted #000;
+    width: 18mm;
+    white-space: nowrap;
+  }
+  table.info-table td.info-spacer {
+    width: 6mm;
+    border: none;
+    padding: 0;
+  }
+
+  /* ===== Visits table — 5 columns (NO المنطقة) ===== */
+  /* Wrapper grows to absorb extra space so signatures stick to bottom */
+  .table-wrap {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  table.visits-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1.5pt solid #000;
+    table-layout: fixed;
+    margin: 2mm 0 0 0;
+  }
+  table.visits-table th,
+  table.visits-table td {
+    border: 1pt solid #000;
+    padding: 1.8mm 1.5mm;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 10.5pt;
+    word-wrap: break-word;
+  }
+  table.visits-table thead th {
+    background: #d9d9d9;
+    font-weight: bold;
+    font-size: 11pt;
+    height: 7mm;
+    padding: 1.2mm 1.5mm;
+  }
+  table.visits-table tbody td {
+    height: 12mm;
+  }
+  .col-num       { width: 8%; }
+  .col-mosque    { width: 35%; }
+  .col-date      { width: 13%; }
+  .col-reason    { width: 26%; }
+  .col-sig       { width: 18%; }
+
+  td.row-num {
+    font-weight: bold;
+    background: #f5f5f5;
+  }
+  tr.total-row td {
+    height: 7mm;
+    border: 0.5pt solid #000;
+    background: #fff;
+  }
+  tr.total-row td.total-label {
+    font-weight: bold;
+    text-align: center;
+    font-size: 11pt;
+  }
+
+  /* ===== Signatures — pushed to bottom via margin-top:auto on flex parent ===== */
+  table.signatures-section {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin-top: 2mm;
+    flex-shrink: 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  table.signatures-section td.signature-box {
+    width: 33.33%;
+    text-align: center;
+    vertical-align: top;
+    padding: 0 6mm;
+  }
+  .signature-title {
+    font-weight: bold;
+    font-size: 12pt;
+    margin-bottom: 2mm;
+  }
+  .signature-name {
+    font-size: 10pt;
+    font-weight: bold;
+    margin-bottom: 16mm;
+    min-height: 3mm;
+  }
+  .signature-line {
+    border-top: 1.2pt solid #000;
+    margin-top: 0;
+    padding-top: 1mm;
+    min-height: 4mm;
+    font-size: 8.5pt;
+    color: #333;
+  }
+
+  /* ===== Attendance image second page ===== */
+  .attendance-page {
+    page-break-before: always;
+    text-align: center;
+  }
+  .attendance-page h2 {
+    font-size: 14pt;
+    margin: 0 0 4mm 0;
+    border-bottom: 1pt solid #000;
+    padding-bottom: 2mm;
+  }
+  .attendance-page img {
+    max-width: 100%;
+    max-height: 250mm;
+    border: 1pt solid #000;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ===== HEADER WITH 3 LOGOS + CAPTIONS ===== -->
+  <table class="form-header">
+    <tr>
+      <td class="logo-box">
+        <img class="logo-img" src="file://{{ logos_dir }}/right-logo.png" alt="">
+        <div class="right-logo-caption">
+          <div class="right-logo-line right-logo-line-ar">وزارة الشئون الإسلامية</div>
+          <div class="right-logo-line right-logo-line-en">Ministry Of Islamic Affairs</div>
+          <div class="right-logo-line right-logo-line-mixed">State Of Kuwait l دولة الكويت</div>
+        </div>
+      </td>
+      <td class="logo-box">
+        <img class="logo-img" src="file://{{ logos_dir }}/center-logo.png" alt="">
+        <div class="center-logo-caption">Kuwait Capital Of Islamic Culture 2016</div>
+      </td>
+      <td class="logo-box">
+        <img class="logo-img" src="file://{{ logos_dir }}/left-logo.png" alt="">
+        <div class="left-logo-caption">إدارة مساجد محافظة مبارك الكبير</div>
+      </td>
+    </tr>
+  </table>
+
+  <hr class="header-divider">
+
+  <!-- ===== TITLE ===== -->
+  <h1 class="form-title">زيارات ميدانية لاستلام مواقع</h1>
+
+  <!-- ===== INFO BLOCK — table layout: label cell + dotted value cell ===== -->
+  <div class="info-block">
+
+    <!-- Row 1: اسم المستلم + شهر / سنة on the same line -->
+    <table class="info-table">
+      <tr>
+        <td class="info-label">اسم المستلم :</td>
+        <td class="info-value">{{ owner_name or "" }}</td>
+        <td class="info-spacer"></td>
+        <td class="info-label">الشهر :</td>
+        <td class="info-value-small">{{ month or "" }}</td>
+        <td class="info-spacer"></td>
+        <td class="info-label">السنة :</td>
+        <td class="info-value-small">{{ year or "" }}</td>
+      </tr>
+    </table>
+
+    <!-- Row 2: الرقم المدني -->
+    <table class="info-table">
+      <tr>
+        <td class="info-label">الرقم المدني :</td>
+        <td class="info-value">{{ civil_id or "" }}</td>
+      </tr>
+    </table>
+
+    <!-- Row 3: المسمى الوظيفي -->
+    <table class="info-table">
+      <tr>
+        <td class="info-label">المسمى الوظيفي :</td>
+        <td class="info-value">{{ job_title or "" }}</td>
+      </tr>
+    </table>
+
+  </div>
+
+  <!-- ===== VISITS TABLE — wrapper grows so signatures stick to bottom ===== -->
+  <div class="table-wrap">
+    <table class="visits-table">
+      <thead>
+        <tr>
+          <th class="col-num">م</th>
+          <th class="col-mosque">المسجد</th>
+          <th class="col-date">التاريخ</th>
+          <th class="col-reason">سبب الزيارة</th>
+          <th class="col-sig">التوقيع</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set total_rows = 12 %}
+        {% set actual = rows or [] %}
+        {% for i in range(total_rows) %}
+          {% set r = actual[i] if i < actual|length else None %}
+          <tr>
+            <td class="row-num">{{ i + 1 }}</td>
+            <td>{{ (r.mosque if r else "") or "" }}</td>
+            <td>{{ (r.date if r else "") or "" }}</td>
+            <td>{{ (r.description if r else "") or "" }}</td>
+            <td>{{ (r.signature if r else "") or "" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr class="total-row">
+          <td class="total-label" colspan="2">الإجمالي</td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- ===== SIGNATURES (pushed to bottom of page via flex layout) ===== -->
+  <table class="signatures-section">
+    <tr>
+      <td class="signature-box">
+        <div class="signature-title">رئيس القسم</div>
+        <div class="signature-name">{{ head_signed_by_name or "" }}</div>
+        <div class="signature-line">{% if head_signed_at %}{{ head_signed_at }}{% endif %}</div>
+      </td>
+      <td class="signature-box">
+        <div class="signature-title">مراقب الصيانة</div>
+        <div class="signature-name">{{ supervisor_signed_by_name or "" }}</div>
+        <div class="signature-line">{% if supervisor_signed_at %}{{ supervisor_signed_at }}{% endif %}</div>
+      </td>
+      <td class="signature-box">
+        <div class="signature-title">مدير الإدارة</div>
+        <div class="signature-name">{{ director_signed_by_name or "" }}</div>
+        <div class="signature-line">{% if director_signed_at %}{{ director_signed_at }}{% endif %}</div>
+      </td>
+    </tr>
+  </table>
+
+</div>
+
+<!-- ===== ATTENDANCE PROOF (separate page, only when present) ===== -->
+{% if attendance_image_data_uri %}
+<div class="attendance-page">
+  <h2>مرفق إثبات الحضور — طلب #{{ id }}</h2>
+  <img src="{{ attendance_image_data_uri }}" alt="attendance proof">
+</div>
+{% endif %}
+
+</body>
+</html>

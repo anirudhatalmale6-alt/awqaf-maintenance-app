@@ -1,0 +1,33 @@
+{
+    "title": "report_shares",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Primary key, auto-increment"
+        },
+        "user_id": {
+            "type": "string",
+            "description": "Sharing user ID"
+        },
+        "report_id": {
+            "type": "integer",
+            "description": "Shared report ID"
+        },
+        "recipient_id": {
+            "type": "string",
+            "description": "Recipient user ID"
+        },
+        "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Share time"
+        }
+    },
+    "required": [
+        "id",
+        "user_id",
+        "report_id",
+        "recipient_id"
+    ]
+}

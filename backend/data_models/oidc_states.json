@@ -1,0 +1,42 @@
+{
+    "title": "oidc_states",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Primary key, auto-increment"
+        },
+        "state": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "OIDC state parameter"
+        },
+        "nonce": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "OIDC nonce"
+        },
+        "code_verifier": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "PKCE code verifier"
+        },
+        "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "State expiration time"
+        },
+        "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation time"
+        }
+    },
+    "required": [
+        "id",
+        "state",
+        "nonce",
+        "code_verifier",
+        "expires_at"
+    ]
+}

@@ -1,0 +1,65 @@
+{
+    "title": "reports",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Primary key, auto-increment"
+        },
+        "user_id": {
+            "type": "string",
+            "description": "Reporter user ID"
+        },
+        "title": {
+            "type": "string",
+            "description": "Report title"
+        },
+        "description": {
+            "type": "string",
+            "description": "Report description"
+        },
+        "category": {
+            "type": "string",
+            "description": "Report category"
+        },
+        "priority": {
+            "type": "string",
+            "description": "Report priority level"
+        },
+        "status": {
+            "type": "string",
+            "description": "Report status"
+        },
+        "reporter_name": {
+            "type": "string",
+            "description": "Reporter display name"
+        },
+        "reporter_phone": {
+            "type": "string",
+            "description": "Reporter phone number"
+        },
+        "reporter_role": {
+            "type": "string",
+            "description": "Reporter role"
+        },
+        "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation time"
+        },
+        "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update time"
+        }
+    },
+    "required": [
+        "id",
+        "user_id",
+        "title",
+        "description",
+        "category",
+        "priority",
+        "status"
+    ]
+}

@@ -1,0 +1,41 @@
+{
+    "title": "report_activity_log",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Primary key, auto-increment"
+        },
+        "report_id": {
+            "type": "integer",
+            "description": "Report ID"
+        },
+        "user_id": {
+            "type": "string",
+            "description": "User ID who performed the action"
+        },
+        "user_name": {
+            "type": "string",
+            "description": "User name who performed the action"
+        },
+        "action_type": {
+            "type": "string",
+            "description": "Type of action"
+        },
+        "description": {
+            "type": "string",
+            "description": "Human-readable description"
+        },
+        "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp"
+        }
+    },
+    "required": [
+        "id",
+        "report_id",
+        "action_type",
+        "description"
+    ]
+}

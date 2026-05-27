@@ -1,0 +1,44 @@
+{
+    "title": "notifications",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Primary key, auto-increment"
+        },
+        "user_id": {
+            "type": "string",
+            "description": "Notification recipient user ID"
+        },
+        "type": {
+            "type": "string",
+            "description": "Notification type"
+        },
+        "message": {
+            "type": "string",
+            "description": "Notification message"
+        },
+        "report_id": {
+            "type": "integer",
+            "description": "Related report ID"
+        },
+        "is_read": {
+            "type": "boolean",
+            "description": "Read status",
+            "default": false
+        },
+        "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation time"
+        }
+    },
+    "required": [
+        "id",
+        "user_id",
+        "type",
+        "message",
+        "report_id",
+        "is_read"
+    ]
+}

@@ -1,0 +1,37 @@
+{
+    "title": "report_images",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Primary key, auto-increment"
+        },
+        "user_id": {
+            "type": "string",
+            "description": "Uploader user ID"
+        },
+        "report_id": {
+            "type": "integer",
+            "description": "Associated report ID"
+        },
+        "object_key": {
+            "type": "string",
+            "description": "Storage object key"
+        },
+        "file_name": {
+            "type": "string",
+            "description": "Original file name"
+        },
+        "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Upload time"
+        }
+    },
+    "required": [
+        "id",
+        "report_id",
+        "object_key",
+        "file_name"
+    ]
+}

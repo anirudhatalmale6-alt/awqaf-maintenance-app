@@ -1,0 +1,32 @@
+{
+    "title": "custom_texts",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Primary key, auto-increment"
+        },
+        "text_key": {
+            "type": "string",
+            "description": "Unique key identifying the text element, e.g. 'home.hero.title'"
+        },
+        "text_value": {
+            "type": "string",
+            "description": "The custom text content"
+        },
+        "updated_by": {
+            "type": "string",
+            "description": "User ID of who last updated this text"
+        },
+        "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+        }
+    },
+    "required": [
+        "id",
+        "text_key",
+        "text_value"
+    ]
+}

@@ -1,0 +1,44 @@
+{
+    "title": "email_preferences",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Primary key, auto-increment"
+        },
+        "user_id": {
+            "type": "string",
+            "description": "User ID"
+        },
+        "email_on_status_change": {
+            "type": "boolean",
+            "description": "Receive email when report status changes"
+        },
+        "email_on_new_note": {
+            "type": "boolean",
+            "description": "Receive email when new note is added"
+        },
+        "email_on_report_shared": {
+            "type": "boolean",
+            "description": "Receive email when report is shared"
+        },
+        "email_on_report_assigned": {
+            "type": "boolean",
+            "description": "Receive email when report is assigned"
+        },
+        "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+        },
+        "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+        }
+    },
+    "required": [
+        "id",
+        "user_id"
+    ]
+}

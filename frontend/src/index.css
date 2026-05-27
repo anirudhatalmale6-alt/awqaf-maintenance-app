@@ -1,0 +1,861 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 217 91% 42%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 214 32% 94%;
+    --secondary-foreground: 222 47% 15%;
+
+    --muted: 214 32% 95%;
+    --muted-foreground: 215 16% 45%;
+
+    --accent: 43 96% 56%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 0 84% 58%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 28% 90%;
+    --input: 214 28% 90%;
+    --ring: 217 91% 50%;
+
+    --radius: 0.65rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Deep navy blue theme inspired by reference dashboard */
+    --background: 222 47% 8%;
+    --foreground: 213 31% 91%;
+
+    --card: 222 44% 11%;
+    --card-foreground: 213 31% 91%;
+
+    --popover: 222 44% 11%;
+    --popover-foreground: 213 31% 91%;
+
+    --primary: 199 89% 48%;
+    --primary-foreground: 222 47% 8%;
+
+    --secondary: 222 40% 16%;
+    --secondary-foreground: 213 31% 91%;
+
+    --muted: 222 40% 16%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 222 40% 16%;
+    --accent-foreground: 213 31% 91%;
+
+    --destructive: 0 62.8% 45%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 222 35% 20%;
+    --input: 222 35% 20%;
+    --ring: 199 89% 48%;
+
+    --sidebar-background: 222 47% 6%;
+    --sidebar-foreground: 213 31% 91%;
+    --sidebar-primary: 199 89% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 40% 13%;
+    --sidebar-accent-foreground: 213 31% 91%;
+    --sidebar-border: 222 35% 20%;
+    --sidebar-ring: 199 89% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, -apple-system,
+      'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-feature-settings: 'ss01', 'cv01', 'cv02';
+    letter-spacing: -0.005em;
+  }
+
+  /* Professional heading hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cairo', 'Inter', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+
+  /* Smoother focus rings */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: calc(var(--radius) - 2px);
+  }
+
+  /* Selection color */
+  ::selection {
+    background-color: hsl(217 91% 50% / 0.18);
+    color: hsl(var(--foreground));
+  }
+  .dark ::selection {
+    background-color: hsl(199 89% 48% / 0.30);
+    color: hsl(var(--foreground));
+  }
+
+  /* Light-mode refined scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(214 20% 80%);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(214 20% 68%);
+    background-clip: padding-box;
+    border: 2px solid transparent;
+  }
+}
+
+/* ===== Global micro-interactions & polish ===== */
+@layer components {
+  /* Soft elevation shadows for cards */
+  .shadow-sm {
+    box-shadow: 0 1px 2px 0 hsl(222 47% 11% / 0.04),
+      0 1px 1px 0 hsl(222 47% 11% / 0.03);
+  }
+  .shadow,
+  .shadow-md {
+    box-shadow: 0 2px 6px -1px hsl(222 47% 11% / 0.06),
+      0 2px 4px -2px hsl(222 47% 11% / 0.04);
+  }
+  .shadow-lg {
+    box-shadow: 0 10px 20px -6px hsl(222 47% 11% / 0.10),
+      0 6px 10px -4px hsl(222 47% 11% / 0.06);
+  }
+
+  /* Gentle hover lift for interactive card-like elements */
+  .hover-lift {
+    transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -8px hsl(217 91% 30% / 0.15),
+      0 8px 16px -8px hsl(222 47% 11% / 0.08);
+  }
+
+  /* Button press feedback */
+  button:not(:disabled):active {
+    transform: translateY(0.5px) scale(0.995);
+  }
+
+  /* Smooth transitions on common interactive elements */
+  button,
+  a,
+  [role="button"],
+  [role="tab"],
+  input,
+  textarea,
+  select {
+    transition-property: background-color, border-color, color, box-shadow,
+      transform, opacity;
+    transition-duration: 180ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/*
+ * Dark mode overrides for hardcoded Tailwind utility classes.
+ * This approach avoids editing hundreds of lines across multiple components.
+ * It remaps common light-mode colors to dark equivalents automatically.
+ */
+@layer utilities {
+  /* ===== Background overrides ===== */
+  .dark .bg-white {
+    background-color: hsl(222 44% 11%) !important;
+  }
+  .dark .bg-gray-50,
+  .dark .bg-slate-50 {
+    background-color: hsl(222 47% 8%) !important;
+  }
+  .dark .bg-gray-100,
+  .dark .bg-slate-100 {
+    background-color: hsl(222 40% 13%) !important;
+  }
+  .dark .bg-gray-200,
+  .dark .bg-slate-200 {
+    background-color: hsl(222 35% 16%) !important;
+  }
+
+  /* Table alternating rows */
+  .dark .bg-gray-50\/50 {
+    background-color: hsl(222 44% 10% / 0.5) !important;
+  }
+
+  /* ===== Text color overrides ===== */
+  .dark .text-gray-900,
+  .dark .text-slate-900 {
+    color: hsl(213 31% 94%) !important;
+  }
+  .dark .text-gray-800,
+  .dark .text-slate-800 {
+    color: hsl(213 31% 88%) !important;
+  }
+  .dark .text-gray-700,
+  .dark .text-slate-700 {
+    color: hsl(213 25% 80%) !important;
+  }
+  .dark .text-gray-600,
+  .dark .text-slate-600 {
+    color: hsl(215 20% 70%) !important;
+  }
+  .dark .text-gray-500,
+  .dark .text-slate-500 {
+    color: hsl(215 20% 60%) !important;
+  }
+  .dark .text-gray-400,
+  .dark .text-slate-400 {
+    color: hsl(215 15% 50%) !important;
+  }
+  .dark .text-gray-300,
+  .dark .text-slate-300 {
+    color: hsl(215 15% 45%) !important;
+  }
+
+  /* ===== Border color overrides ===== */
+  .dark .border-gray-100,
+  .dark .border-slate-100 {
+    border-color: hsl(222 35% 18%) !important;
+  }
+  .dark .border-gray-200,
+  .dark .border-slate-200 {
+    border-color: hsl(222 35% 20%) !important;
+  }
+  .dark .border-gray-300,
+  .dark .border-slate-300 {
+    border-color: hsl(222 30% 22%) !important;
+  }
+
+  /* ===== Hover state overrides ===== */
+  .dark .hover\:bg-gray-50:hover,
+  .dark .hover\:bg-slate-50:hover {
+    background-color: hsl(222 40% 13%) !important;
+  }
+  .dark .hover\:bg-gray-100:hover,
+  .dark .hover\:bg-slate-100:hover {
+    background-color: hsl(222 40% 16%) !important;
+  }
+  .dark .hover\:bg-gray-200:hover {
+    background-color: hsl(222 35% 18%) !important;
+  }
+  .dark .hover\:text-gray-700:hover {
+    color: hsl(213 25% 80%) !important;
+  }
+
+  /* ===== Blue accent adjustments ===== */
+  .dark .bg-blue-50 {
+    background-color: hsl(217 50% 14%) !important;
+  }
+  .dark .bg-blue-100 {
+    background-color: hsl(217 50% 18%) !important;
+  }
+  .dark .text-blue-600 {
+    color: hsl(199 89% 55%) !important;
+  }
+  .dark .text-blue-700 {
+    color: hsl(199 89% 60%) !important;
+  }
+  .dark .text-blue-800 {
+    color: hsl(199 80% 70%) !important;
+  }
+  .dark .border-blue-200 {
+    border-color: hsl(217 50% 22%) !important;
+  }
+
+  /* ===== Amber/Yellow accent adjustments ===== */
+  .dark .bg-amber-50 {
+    background-color: hsl(38 50% 12%) !important;
+  }
+  .dark .bg-amber-100 {
+    background-color: hsl(38 50% 16%) !important;
+  }
+  .dark .text-amber-600 {
+    color: hsl(38 92% 55%) !important;
+  }
+  .dark .text-amber-700 {
+    color: hsl(38 85% 60%) !important;
+  }
+  .dark .text-amber-800 {
+    color: hsl(38 80% 70%) !important;
+  }
+  .dark .border-amber-200 {
+    border-color: hsl(38 50% 22%) !important;
+  }
+
+  /* ===== Green accent adjustments ===== */
+  .dark .bg-green-50 {
+    background-color: hsl(142 50% 10%) !important;
+  }
+  .dark .bg-green-100 {
+    background-color: hsl(142 50% 14%) !important;
+  }
+  .dark .text-green-600 {
+    color: hsl(142 71% 55%) !important;
+  }
+  .dark .text-green-700 {
+    color: hsl(142 71% 60%) !important;
+  }
+  .dark .text-green-800 {
+    color: hsl(142 60% 70%) !important;
+  }
+
+  /* ===== Red/Destructive accent adjustments ===== */
+  .dark .bg-red-50 {
+    background-color: hsl(0 50% 12%) !important;
+  }
+  .dark .bg-red-100 {
+    background-color: hsl(0 50% 16%) !important;
+  }
+  .dark .text-red-600 {
+    color: hsl(0 72% 60%) !important;
+  }
+  .dark .text-red-700 {
+    color: hsl(0 72% 65%) !important;
+  }
+  .dark .text-red-800 {
+    color: hsl(0 60% 70%) !important;
+  }
+
+  /* ===== Purple accent adjustments ===== */
+  .dark .bg-purple-50 {
+    background-color: hsl(270 50% 12%) !important;
+  }
+  .dark .bg-purple-100 {
+    background-color: hsl(270 50% 16%) !important;
+  }
+  .dark .text-purple-600 {
+    color: hsl(270 70% 65%) !important;
+  }
+  .dark .text-purple-700 {
+    color: hsl(270 70% 70%) !important;
+  }
+  .dark .border-purple-200 {
+    border-color: hsl(270 40% 22%) !important;
+  }
+
+  /* ===== Orange accent adjustments ===== */
+  .dark .bg-orange-50 {
+    background-color: hsl(25 50% 12%) !important;
+  }
+  .dark .bg-orange-100 {
+    background-color: hsl(25 50% 16%) !important;
+  }
+  .dark .text-orange-600 {
+    color: hsl(25 95% 55%) !important;
+  }
+  .dark .text-orange-700 {
+    color: hsl(25 90% 60%) !important;
+  }
+
+  /* ===== Ring/focus overrides ===== */
+  .dark .ring-gray-200 {
+    --tw-ring-color: hsl(222 35% 20%) !important;
+  }
+  .dark .ring-gray-300 {
+    --tw-ring-color: hsl(222 30% 22%) !important;
+  }
+
+  /* ===== Divide color overrides ===== */
+  .dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]) {
+    border-color: hsl(222 35% 18%) !important;
+  }
+  .dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+    border-color: hsl(222 35% 20%) !important;
+  }
+
+  /* ===== Gradient overrides ===== */
+  .dark .from-slate-50 {
+    --tw-gradient-from: hsl(222 47% 8%) var(--tw-gradient-from-position) !important;
+  }
+  .dark .to-blue-50 {
+    --tw-gradient-to: hsl(222 50% 12%) var(--tw-gradient-to-position) !important;
+  }
+
+  /* ===== Shadow adjustments ===== */
+  .dark .shadow-sm,
+  .dark .shadow,
+  .dark .shadow-md,
+  .dark .shadow-lg {
+    --tw-shadow-color: hsl(222 50% 4% / 0.4) !important;
+  }
+
+  /* ===== Placeholder text ===== */
+  .dark .placeholder\:text-gray-400::placeholder,
+  .dark .placeholder\:text-slate-400::placeholder {
+    color: hsl(215 15% 40%) !important;
+  }
+
+  /* ===== Scrollbar styling for dark mode ===== */
+  .dark ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .dark ::-webkit-scrollbar-track {
+    background: hsl(222 47% 8%);
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background: hsl(222 35% 22%);
+    border-radius: 4px;
+  }
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: hsl(222 35% 28%);
+  }
+
+  /* ===== Thin horizontal scrollbar for status filter tabs ===== */
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(0 0% 78%);
+    border-radius: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(0 0% 65%);
+  }
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(222 35% 25%);
+  }
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(222 35% 35%);
+  }
+}
+
+/*
+ * Dark mode component-level enhancements
+ * These provide additional polish for specific UI patterns
+ */
+@layer components {
+  /* Cards and panels get subtle glass-morphism in dark mode */
+  .dark .rounded-xl.border,
+  .dark .rounded-lg.border {
+    border-color: hsl(222 35% 18%);
+    background-color: hsl(222 44% 11%);
+  }
+
+  /* Table headers in dark mode */
+  .dark table thead tr,
+  .dark table .bg-gray-100 {
+    background-color: hsl(222 40% 13%) !important;
+  }
+
+  /* Table rows hover */
+  .dark table tbody tr:hover {
+    background-color: hsl(222 40% 14%) !important;
+  }
+
+  /* Input fields in dark mode */
+  .dark input,
+  .dark textarea,
+  .dark select {
+    background-color: hsl(222 44% 11%);
+    border-color: hsl(222 35% 20%);
+    color: hsl(213 31% 91%);
+  }
+  .dark input::placeholder,
+  .dark textarea::placeholder {
+    color: hsl(215 15% 40%);
+  }
+  .dark input:focus,
+  .dark textarea:focus,
+  .dark select:focus {
+    border-color: hsl(199 89% 48%);
+    box-shadow: 0 0 0 2px hsl(199 89% 48% / 0.15);
+  }
+
+  /* Tabs styling in dark mode */
+  .dark [role="tablist"] {
+    background-color: hsl(222 40% 13%);
+    border-color: hsl(222 35% 18%);
+  }
+  .dark [role="tab"][data-state="active"] {
+    background-color: hsl(222 44% 16%);
+    color: hsl(213 31% 94%);
+  }
+
+  /* Badge/status pill adjustments */
+  .dark .bg-gray-100.text-gray-800 {
+    background-color: hsl(222 35% 18%) !important;
+    color: hsl(213 25% 80%) !important;
+  }
+  .dark .bg-gray-100.text-gray-700 {
+    background-color: hsl(222 35% 18%) !important;
+    color: hsl(213 25% 75%) !important;
+  }
+  .dark .bg-gray-100.text-gray-600 {
+    background-color: hsl(222 35% 18%) !important;
+    color: hsl(215 20% 70%) !important;
+  }
+
+  /* Status color badges in dark mode */
+  .dark .bg-green-100.text-green-800 {
+    background-color: hsl(142 40% 14%) !important;
+    color: hsl(142 60% 70%) !important;
+  }
+  .dark .bg-blue-100.text-blue-800 {
+    background-color: hsl(217 40% 16%) !important;
+    color: hsl(199 80% 70%) !important;
+  }
+  .dark .bg-yellow-100.text-yellow-800 {
+    background-color: hsl(45 50% 14%) !important;
+    color: hsl(45 80% 65%) !important;
+  }
+  .dark .bg-red-100.text-red-800 {
+    background-color: hsl(0 40% 14%) !important;
+    color: hsl(0 60% 70%) !important;
+  }
+  .dark .bg-purple-100.text-purple-800 {
+    background-color: hsl(270 40% 14%) !important;
+    color: hsl(270 60% 70%) !important;
+  }
+  .dark .bg-orange-100.text-orange-800 {
+    background-color: hsl(25 50% 14%) !important;
+    color: hsl(25 80% 65%) !important;
+  }
+  .dark .bg-amber-100.text-amber-800 {
+    background-color: hsl(38 50% 14%) !important;
+    color: hsl(38 80% 65%) !important;
+  }
+  .dark .bg-teal-100.text-teal-800 {
+    background-color: hsl(168 40% 12%) !important;
+    color: hsl(168 60% 65%) !important;
+  }
+  .dark .bg-indigo-100.text-indigo-800 {
+    background-color: hsl(234 40% 16%) !important;
+    color: hsl(234 60% 70%) !important;
+  }
+  .dark .bg-pink-100.text-pink-800 {
+    background-color: hsl(330 40% 14%) !important;
+    color: hsl(330 60% 70%) !important;
+  }
+  .dark .bg-cyan-100.text-cyan-800 {
+    background-color: hsl(187 40% 12%) !important;
+    color: hsl(187 60% 65%) !important;
+  }
+
+  /* Priority badges */
+  .dark .bg-red-100.text-red-700 {
+    background-color: hsl(0 40% 14%) !important;
+    color: hsl(0 65% 65%) !important;
+  }
+  .dark .bg-orange-100.text-orange-700 {
+    background-color: hsl(25 45% 14%) !important;
+    color: hsl(25 80% 60%) !important;
+  }
+  .dark .bg-yellow-100.text-yellow-700 {
+    background-color: hsl(45 45% 14%) !important;
+    color: hsl(45 75% 60%) !important;
+  }
+  .dark .bg-blue-100.text-blue-700 {
+    background-color: hsl(217 40% 16%) !important;
+    color: hsl(199 80% 65%) !important;
+  }
+  .dark .bg-green-100.text-green-700 {
+    background-color: hsl(142 40% 12%) !important;
+    color: hsl(142 60% 65%) !important;
+  }
+
+  /* Dialog/Modal in dark mode */
+  .dark [role="dialog"] {
+    background-color: hsl(222 44% 11%);
+    border-color: hsl(222 35% 18%);
+  }
+
+  /* Popover in dark mode */
+  .dark [data-radix-popper-content-wrapper] [role="listbox"],
+  .dark [data-radix-popper-content-wrapper] [data-radix-collection-item] {
+    background-color: hsl(222 44% 11%);
+  }
+
+  /* Sonner toast in dark mode */
+  .dark [data-sonner-toaster] [data-sonner-toast] {
+    background-color: hsl(222 44% 14%);
+    border-color: hsl(222 35% 20%);
+    color: hsl(213 31% 91%);
+  }
+
+  /* WebSocket connection indicator border fix */
+  .dark .border-white {
+    border-color: hsl(222 44% 11%) !important;
+  }
+}
+
+/* Animated "New" badge */
+@keyframes new-badge-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.08);
+  }
+}
+
+.new-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.5);
+  animation: new-badge-pulse 1.5s ease-in-out infinite;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+/* Fix date/time input appearance in dark mode */
+.dark input[type="date"],
+.dark input[type="datetime-local"],
+.dark input[type="time"],
+.dark input[type="month"],
+.dark input[type="week"] {
+  color-scheme: dark;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator,
+.dark input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+.dark input[type="time"]::-webkit-calendar-picker-indicator,
+.dark input[type="month"]::-webkit-calendar-picker-indicator,
+.dark input[type="week"]::-webkit-calendar-picker-indicator {
+  filter: brightness(0) invert(1);
+  cursor: pointer;
+  opacity: 1;
+}
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator:hover,
+.dark input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover,
+.dark input[type="time"]::-webkit-calendar-picker-indicator:hover,
+.dark input[type="month"]::-webkit-calendar-picker-indicator:hover,
+.dark input[type="week"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.dark input[type="date"]::-webkit-datetime-edit,
+.dark input[type="datetime-local"]::-webkit-datetime-edit,
+.dark input[type="time"]::-webkit-datetime-edit {
+  color: hsl(var(--foreground));
+}
+
+.dark input[type="date"]::-webkit-datetime-edit-text,
+.dark input[type="date"]::-webkit-datetime-edit-month-field,
+.dark input[type="date"]::-webkit-datetime-edit-day-field,
+.dark input[type="date"]::-webkit-datetime-edit-year-field,
+.dark input[type="datetime-local"]::-webkit-datetime-edit-text,
+.dark input[type="datetime-local"]::-webkit-datetime-edit-month-field,
+.dark input[type="datetime-local"]::-webkit-datetime-edit-day-field,
+.dark input[type="datetime-local"]::-webkit-datetime-edit-year-field,
+.dark input[type="datetime-local"]::-webkit-datetime-edit-hour-field,
+.dark input[type="datetime-local"]::-webkit-datetime-edit-minute-field,
+.dark input[type="time"]::-webkit-datetime-edit-hour-field,
+.dark input[type="time"]::-webkit-datetime-edit-minute-field {
+  color: hsl(var(--foreground));
+}
+
+.dark input[type="date"]:empty::-webkit-datetime-edit,
+.dark input[type="datetime-local"]:empty::-webkit-datetime-edit,
+.dark input[type="time"]:empty::-webkit-datetime-edit {
+  color: hsl(var(--muted-foreground));
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Print styles — used by UserGuide "تحميل الدليل PDF" button
+   (window.print → "Save as PDF" from the browser print dialog).
+   Strategy: hide app chrome (.no-print), force light colors for
+   readability, avoid breaking cards/sections across pages, and
+   remove sticky/scroll constraints so all content flows.
+   ───────────────────────────────────────────────────────────── */
+@media print {
+  /* Hide any element marked as chrome-only */
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+
+  /* Force light color scheme globally for print */
+  html,
+  body {
+    background: #ffffff !important;
+    color: #111111 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Override dark mode on the root and all descendants */
+  .dark,
+  .dark body,
+  [class*="dark:"] {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+
+  /* Reset background to white for ink-friendly output */
+  .user-guide-root {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+
+  /* Force light color scheme even if user is in dark mode */
+  .user-guide-root *,
+  .user-guide-root div,
+  .user-guide-root p,
+  .user-guide-root span,
+  .user-guide-root h1,
+  .user-guide-root h2,
+  .user-guide-root h3,
+  .user-guide-root h4,
+  .user-guide-root h5,
+  .user-guide-root h6,
+  .user-guide-root li,
+  .user-guide-root td,
+  .user-guide-root th,
+  .user-guide-root label,
+  .user-guide-root a {
+    color: #111111 !important;
+    box-shadow: none !important;
+  }
+
+  /* Force all card/section backgrounds to white */
+  .user-guide-root [class*="bg-"],
+  .user-guide-root [class*="dark:bg-"],
+  .user-guide-root .bg-white,
+  .user-guide-root .dark\:bg-slate-900,
+  .user-guide-root .dark\:bg-slate-800,
+  .user-guide-root .dark\:bg-gray-900,
+  .user-guide-root .dark\:bg-gray-800,
+  .user-guide-root .dark\:bg-slate-900\/80 {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+  }
+
+  /* Force borders to be visible light gray */
+  .user-guide-root [class*="border"] {
+    border-color: #e5e7eb !important;
+  }
+
+  /* Force dark text on muted/secondary text elements */
+  .user-guide-root [class*="text-muted"],
+  .user-guide-root [class*="text-slate"],
+  .user-guide-root [class*="text-gray"],
+  .user-guide-root [class*="dark:text-"] {
+    color: #374151 !important;
+  }
+
+  /* Keep the hero readable — convert gradient to solid dark blue */
+  .user-guide-root .print-hero {
+    background: #1e40af !important;
+  }
+  .user-guide-root .print-hero *:not(.no-print) {
+    color: #ffffff !important;
+  }
+
+  /* Hero icon container — keep visible with subtle background */
+  .user-guide-root .print-hero .backdrop-blur {
+    background: rgba(255, 255, 255, 0.15) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Badges should be readable */
+  .user-guide-root .badge,
+  .user-guide-root [class*="Badge"] {
+    background: #e5e7eb !important;
+    color: #111111 !important;
+  }
+
+  /* Expand sticky/scrollable containers so all content prints */
+  .user-guide-root .sticky,
+  .user-guide-root .lg\:sticky {
+    position: static !important;
+  }
+  .user-guide-root .max-h-\[70vh\],
+  .user-guide-root [class*="max-h-"] {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Make the content column span full width */
+  .user-guide-root main {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Avoid splitting sections/cards across pages */
+  .user-guide-root section,
+  .user-guide-root [data-guide-section],
+  .user-guide-root .rounded-xl,
+  .user-guide-root .rounded-lg,
+  .user-guide-root .border {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Let long lists/paragraphs wrap naturally */
+  .user-guide-root * {
+    overflow: visible !important;
+  }
+
+  /* Page setup — A4 with comfortable margins */
+  @page {
+    size: A4;
+    margin: 14mm 12mm;
+  }
+
+  /* Remove interactive focus rings from print */
+  .user-guide-root *:focus,
+  .user-guide-root *:focus-visible {
+    outline: none !important;
+  }
+}
