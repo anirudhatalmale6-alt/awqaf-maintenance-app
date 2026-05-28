@@ -393,6 +393,7 @@ async def debug_db():
     """Temporary diagnostic endpoint to debug database connectivity."""
     import os as _os
     import socket
+    import asyncpg
     from core.database import db_manager
     from core.config import settings
     from services.database import _db_initialized
@@ -405,58 +406,56 @@ async def debug_db():
     port = parsed.port if parsed else "N/A"
     dbname = parsed.path.lstrip("/") if parsed else "N/A"
     user = parsed.username if parsed else "N/A"
+    password = parsed.password if parsed else ""
 
-    dns_result = "N/A"
-    if host and host != "N/A":
+    engine_url = "N/A"
+    if db_manager.engine:
         try:
-            ips = socket.getaddrinfo(host, port, socket.AF_INET)
-            dns_result = str([ip[4][0] for ip in ips[:3]])
+            eu = db_manager.engine.url
+            engine_url = f"{eu.drivername}://{eu.username}:{'***' if eu.password else 'NONE'}@{eu.host}:{eu.port}/{eu.database}"
+            result_pw_len = len(eu.password) if eu.password else 0
         except Exception as e:
-            dns_result = f"FAILED: {e}"
-
-    settings_url = "N/A"
-    try:
-        settings_url = str(settings.database_url)[:50] + "..."
-    except Exception:
-        settings_url = "NOT SET"
+            engine_url = f"ERROR: {e}"
+            result_pw_len = -1
+    else:
+        result_pw_len = -1
 
     result = {
         "host": host,
         "port": port,
         "database": dbname,
         "user": user,
-        "dns_resolution": dns_result,
-        "settings_url_preview": settings_url,
+        "env_password_length": len(password) if password else 0,
+        "engine_url": engine_url,
+        "engine_password_length": result_pw_len,
         "engine_created": db_manager.engine is not None,
         "session_maker_created": db_manager.async_session_maker is not None,
         "db_initialized_flag": _db_initialized,
     }
 
+    try:
+        conn = await asyncpg.connect(
+            host=host, port=int(port) if port != "N/A" else 5432,
+            user=user, password=password,
+            database=dbname, timeout=10, ssl=False
+        )
+        val = await conn.fetchval("SELECT 1")
+        result["direct_asyncpg_nossl"] = f"OK (result={val})"
+        await conn.close()
+    except Exception as e:
+        result["direct_asyncpg_nossl"] = f"FAILED: {type(e).__name__}: {e}"
+
     if db_manager.async_session_maker:
         try:
             async with db_manager.async_session_maker() as session:
                 await session.execute(text("SELECT 1"))
-                result["connection_test"] = "OK"
+                result["sqlalchemy_test"] = "OK"
                 tables = await session.execute(text(
                     "SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename"
                 ))
                 result["tables"] = [r[0] for r in tables.fetchall()]
         except Exception as e:
-            result["connection_test"] = f"FAILED: {type(e).__name__}: {str(e)}"
-    else:
-        try:
-            import asyncpg
-            conn = await asyncpg.connect(
-                host=host, port=int(port), user=user,
-                password=parsed.password if parsed else "",
-                database=dbname, timeout=10
-            )
-            val = await conn.fetchval("SELECT 1")
-            result["direct_asyncpg_test"] = f"OK (result={val})"
-            await conn.close()
-        except Exception as e:
-            result["direct_asyncpg_test"] = f"FAILED: {type(e).__name__}: {str(e)}"
-        result["connection_test"] = "NO SESSION MAKER - tried direct asyncpg"
+            result["sqlalchemy_test"] = f"FAILED: {type(e).__name__}: {e}"
 
     return result
 
