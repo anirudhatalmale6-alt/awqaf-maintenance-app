@@ -122,8 +122,8 @@ async def guest_get_download_url(data: GuestDownloadUrlRequest):
 
 @router.get("/file-proxy")
 async def guest_file_proxy(bucket_name: str, object_key: str):
-    """Proxy endpoint to stream file content directly from OSS storage.
-    This bypasses CORS restrictions on presigned URLs, enabling PDF rendering in browser."""
+    """Serve file content directly from local storage.
+    This bypasses CORS restrictions, enabling PDF rendering in browser."""
     try:
         if bucket_name != "report-images":
             raise HTTPException(status_code=400, detail="غير مسموح بالتحميل من هذا المخزن")
@@ -132,37 +132,19 @@ async def guest_file_proxy(bucket_name: str, object_key: str):
             raise HTTPException(status_code=400, detail="مسار الملف غير صالح")
 
         service = StorageService()
-        request_data = FileUpDownRequest(
-            bucket_name=bucket_name,
-            object_key=object_key,
-        )
-        result = await service.create_download_url(request_data)
-
-        download_url = ""
-        if hasattr(result, "download_url"):
-            download_url = result.download_url
-        elif isinstance(result, dict):
-            download_url = result.get("download_url", "")
-
-        if not download_url:
+        data = service.read_file(bucket_name, object_key)
+        if data is None:
             raise HTTPException(status_code=404, detail="لم يتم العثور على الملف")
 
-        # Fetch the actual file content from the presigned URL
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            response = await client.get(download_url)
-            response.raise_for_status()
-
-        # Determine content type
         import mimetypes
         content_type, _ = mimetypes.guess_type(object_key)
         if not content_type:
-            content_type = response.headers.get("content-type", "application/octet-stream")
+            content_type = "application/octet-stream"
 
-        # Extract filename from object_key
         filename = object_key.split("/")[-1] if "/" in object_key else object_key
 
         return StreamingResponse(
-            iter([response.content]),
+            iter([data]),
             media_type=content_type,
             headers={
                 "Content-Disposition": f'inline; filename="{filename}"',

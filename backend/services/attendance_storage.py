@@ -67,11 +67,16 @@ def _oss_configured() -> bool:
 
 
 def _local_dir() -> Path:
-    """On-disk directory used in dev / when OSS is not configured.
+    """On-disk directory for attendance images.
 
-    Mirrors the legacy ``_attendance_dir`` helper in ``routers/site_visits.py``
-    so that pre-existing files keep working while the codebase migrates.
+    Uses the persistent volume at LOCAL_STORAGE_ROOT when available (Railway),
+    falls back to UPLOADS_DIR or the backend/uploads/ directory for local dev.
     """
+    from services.storage import STORAGE_ROOT
+    persistent = Path(STORAGE_ROOT) / "site-visit-attendance"
+    if Path(STORAGE_ROOT).exists() or os.environ.get("LOCAL_STORAGE_ROOT"):
+        persistent.mkdir(parents=True, exist_ok=True)
+        return persistent
     base = os.environ.get("UPLOADS_DIR", "").strip()
     if base:
         d = Path(base) / "site-visit-attendance"

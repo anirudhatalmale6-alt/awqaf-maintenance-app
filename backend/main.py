@@ -326,8 +326,11 @@ try:
     # app should be migrated to S3 / Atoms Cloud File Storage. For now this
     # fix unblocks the immediate "تعذر حفظ المرفق" error.
     _is_lambda = os.environ.get("IS_LAMBDA") == "true"
+    _persistent_vol = os.environ.get("LOCAL_STORAGE_ROOT", "/data/uploads")
     if _is_lambda:
         _UPLOADS_DIR = "/tmp/uploads"
+    elif os.path.isdir(_persistent_vol):
+        _UPLOADS_DIR = _persistent_vol
     else:
         _UPLOADS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
     os.makedirs(_UPLOADS_DIR, exist_ok=True)
