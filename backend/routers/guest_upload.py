@@ -131,8 +131,15 @@ async def guest_file_proxy(bucket_name: str, object_key: str):
         if not object_key.startswith("reports/"):
             raise HTTPException(status_code=400, detail="مسار الملف غير صالح")
 
+        import os as _os
         service = StorageService()
-        data = service.read_file(bucket_name, object_key)
+        # FileUpDownRequest validator strips to basename, so files are stored
+        # without directory prefixes. Match that when reading.
+        bare_key = _os.path.basename(object_key)
+        data = service.read_file(bucket_name, bare_key)
+        if data is None:
+            # Fallback: try original key in case it was stored with full path
+            data = service.read_file(bucket_name, object_key)
         if data is None:
             raise HTTPException(status_code=404, detail="لم يتم العثور على الملف")
 
